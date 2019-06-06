@@ -108,7 +108,7 @@ namespace AnalogInputs {
     static const uint8_t    PHYSICAL_INPUTS     = VirtualInputs - Vout_plus_pin;
     static const uint8_t    ALL_INPUTS          = LastInput - Vout_plus_pin;
     static const ValueType  REVERSE_POLARITY_MIN_VOLTAGE = ANALOG_VOLT(1.000);
-    static const ValueType  CONNECTED_MIN_VOLTAGE = ANALOG_VOLT(0.400);
+    static const ValueType  CONNECTED_MIN_VOLTAGE = ANALOG_VOLT(1.800); // modificado Demian
 
     //get the average ADC value
     ValueType getAvrADCValue(Name name);
