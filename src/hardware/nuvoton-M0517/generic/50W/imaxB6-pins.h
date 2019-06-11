@@ -68,7 +68,9 @@
 //#define TX_HW_SERIAL_PIN38              7
 //pin 41 - VDD                             //(5+3*12)   VDD
 //pin 42 - AVDD                            //(6+3*12)   AVDD
+
 #define MUX0_Z_D_PIN                    1
+#define MUX0_Z_D_PIN2                   3
 #define DISCHARGE_DISABLE_PIN           33
 #define UART_TX_PIN                     2
 #define T_EXTERNAL_PIN                  2

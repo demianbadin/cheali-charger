@@ -57,6 +57,8 @@ void setCMR() {
 
 void initialize(void)
 {
+return;
+
 //    CLK_EnableModuleClock(PWM01_MODULE);
 //    CLK_EnableModuleClock(PWM67_MODULE);
     CLK_EnableModuleClock(PWM45_MODULE);
@@ -98,6 +100,8 @@ void initialize(void)
 
 void setPWM(uint8_t pin, uint32_t value)
 {
+return;
+
     LogDebug("setPWM pin:", pin, "value:", value);
     if(pin == 23) {
         PWM_valueB = value;
@@ -110,6 +114,8 @@ void setPWM(uint8_t pin, uint32_t value)
 
 void disablePWM(uint8_t pin)
 {
+return;
+
     if(pin == 23) {
         SYS->P2_MFP &= ~SYS_MFP_P24_PWM4; //modificado DMB para nuevo pinout 20->23
     } else if (pin == 25) {
@@ -122,6 +128,8 @@ void disablePWM(uint8_t pin)
 extern "C" {
 void PWMB_IRQHandler(void)
 {
+return;
+
     outputPWM::setCMR();
     PWM_ClearPeriodIntFlag(PWMB, PWM_CH0);
 }

@@ -139,7 +139,7 @@ void setMuxAddressAndDischarge(int8_t address)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         //start mux ADC C discharge
         _setMuxAddress(ADC_CAPACITOR_DISCHARGE_ADDRESS);
-        IO::disableFuncADC(IO::getADCChannel(MUX0_Z_D_PIN));
+        //IO::disableFuncADC(IO::getADCChannel(MUX0_Z_D_PIN2)); 
     }
     TIMER_Start(TIMER1);             /* Start counting */
 }
@@ -152,7 +152,7 @@ void TMR1_IRQHandler(void)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         _setMuxAddress(g_muxAddress);
         //stop mux ADC C discharge
-        IO::enableFuncADC(IO::getADCChannel(MUX0_Z_D_PIN));
+        //IO::enableFuncADC(IO::getADCChannel(MUX0_Z_D_PIN2));
     }
 }
 } //extern "C"
@@ -170,8 +170,16 @@ void initialize()
     IO::pinMode(OUTPUT_VOLTAGE_PLUS_PIN, ANALOG_INPUT);
     IO::pinMode(DISCHARGE_CURRENT_PIN, ANALOG_INPUT);
 
-    IO::pinMode(MUX0_Z_D_PIN, ANALOG_INPUT_DISCHARGE);
-    IO::digitalWrite(MUX0_Z_D_PIN, 0);
+    //IO::pinMode(MUX0_Z_D_PIN, ANALOG_INPUT);//_DISCHARGE);
+    //IO::digitalWrite(MUX0_Z_D_PIN2, 0);
+/////////////////////////////////////////////////// 
+       /* Disable the P1.5 & P1.7 digital input path to avoid the leakage current */
+    GPIO_DISABLE_DIGITAL_PATH(P1, 0x5);
+
+    /* Configure the P1.0 - P1.3 ADC analog input pins */
+    SYS->P1_MFP &= ~(SYS_MFP_P15_Msk | SYS_MFP_P17_Msk);
+    SYS->P1_MFP |= SYS_MFP_P15_AIN5 | SYS_MFP_P17_AIN7 ;
+///////////////////////////////////////////////////
 
     //initialize internal temperature sensor
     SYS->TEMPCR |= 1;
@@ -191,12 +199,13 @@ void initialize()
     CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADC_S_HCLK, CLK_CLKDIV_ADC(CLK_GetHCLKFreq()/ADC_CLOCK_FREQUENCY));
             //__HXT/ADC_CLOCK_FREQUENCY));
 
-    /* Set the ADC operation mode as burst, input mode as single-end and enable the analog input channel 2 */
-    ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_BURST, 0x1 << 2);
-    ADC_SET_DMOF(ADC, ADC_ADCR_DMOF_UNSIGNED_OUTPUT);
-
     /* Power on ADC module */
     ADC_POWER_ON(ADC);
+
+    /* Set the ADC operation mode as burst, input mode as single-end and enable the analog input channel x */
+    ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_BURST, 0x1 << IO::getADCChannel(MUX0_Z_D_PIN));
+    ADC_SET_DMOF(ADC, ADC_ADCR_DMOF_UNSIGNED_OUTPUT);
+
 
     /* clear the A/D interrupt flag for safe */
     ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
